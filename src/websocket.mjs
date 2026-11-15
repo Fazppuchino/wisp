@@ -1,4 +1,4 @@
-//async websocket wrapper for both node and the browser
+//async websocket wrapper for Node.js
 
 import * as compat from "./compat.mjs";
 import { WispPacket } from "./packet.mjs";

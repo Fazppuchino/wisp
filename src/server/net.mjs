@@ -3,20 +3,11 @@ import { AsyncQueue } from "../websocket.mjs";
 import { options } from "./options.mjs";
 import { net, dgram, dns } from "../compat.mjs";
 
-//wrappers for node networking apis
-//in the browser these can be redefined to allow for custom transports
-
-export const is_node = (typeof process !== "undefined");
+//wrappers for Node.js networking APIs
 
 const dns_cache = new Map();
 let dns_servers = null;
 let resolver = null;
-
-export function assert_on_node() {
-  if (!is_node) {
-    throw new Error("not running on node.js");
-  }
-}
 
 //wrapper for node resolver methods
 //resolve4 and resolve6 need to be wrapped to work around a nodejs bug
@@ -79,10 +70,6 @@ async function perform_lookup(hostname) {
 
 //perform a dns lookup and use the cache
 export async function lookup_ip(hostname) {
-  if (!is_node) { //we cannot do the dns lookup on the browser
-    return hostname;
-  }
-
   let ip_level = net.isIP(hostname);
   if (ip_level === 4 || ip_level === 6) {
     return hostname; //hostname is already an ip address
@@ -127,7 +114,6 @@ export async function lookup_ip(hostname) {
 //async tcp and udp socket wrappers
 export class NodeTCPSocket {
   constructor(hostname, port) {
-    assert_on_node();
     this.hostname = hostname;
     this.port = port;
     this.recv_buffer_size = 128;
@@ -203,7 +189,6 @@ export class NodeTCPSocket {
 
 export class NodeUDPSocket {
   constructor(hostname, port) {
-    assert_on_node();
     this.hostname = hostname;
     this.port = port;
 

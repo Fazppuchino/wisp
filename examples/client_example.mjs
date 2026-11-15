@@ -1,10 +1,7 @@
 import { client } from "@mercuryworkshop/wisp-js/client";
-const { ClientConnection, WispWebSocket, _wisp_connections } = client;
+const { ClientConnection, WispWebSocket } = client;
 
 let ws_url = `ws://localhost:5001/ws/`;
-if (typeof process === "undefined") {
-  ws_url = location.href.replace("http", "ws");
-}
 
 function run_demo() {
   let ws = new WispWebSocket(ws_url+"phishing.testcategory.com:80");
@@ -47,11 +44,5 @@ function run_demo() {
     console.log("stream 3 closed");
   }
 }
-
-globalThis.ClientConnection = ClientConnection;
-globalThis.WispWebSocket = WispWebSocket;
-globalThis.ws_url = ws_url;
-globalThis.run_demo = run_demo;
-globalThis._wisp_connections = _wisp_connections;
 
 run_demo();

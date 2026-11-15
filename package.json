@@ -1,7 +1,7 @@
 {
   "name": "@mercuryworkshop/wisp-js",
   "version": "0.5.3",
-  "description": "A client and server for the Wisp protocol, written in Javascript",
+  "description": "A Node.js client and server for the Wisp v2 protocol",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MercuryWorkshop/wisp-js.git"
@@ -12,7 +12,10 @@
     "url": "https://github.com/MercuryWorkshop/wisp-js/issues"
   },
   "homepage": "https://github.com/MercuryWorkshop/wisp-js#readme",
-  "main": "./src/index.mjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "main": "./dist/wisp-full.cjs",
   "exports": {
     ".": {
       "import": "./src/index.mjs",
@@ -26,12 +29,6 @@
       "import": "./src/entrypoints/server.mjs",
       "require": "./dist/wisp-server.cjs"
     }
-  },
-  "browser": {
-    ".": "./src/index.mjs",
-    "./client": "./src/entrypoints/client.mjs",
-    "./server": "./src/entrypoints/server.mjs",
-    "./src/compat.mjs": "./src/compat_browser.mjs"
   },
   "files": [
     "dist",
@@ -53,9 +50,6 @@
     "ws": "^8.22.0"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.9",
-    "@babel/preset-env": "^8.0.7",
-    "babel-loader": "^10.1.1",
     "webpack": "^5.112.2",
     "webpack-cli": "^7.2.3"
   }

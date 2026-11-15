@@ -1,20 +1,20 @@
-# JavaScript Wisp Implementation
+# Node.js Wisp Implementation
 
-This is an implementation of a [Wisp](https://github.com/mercuryWorkshop/wisp-protocol) client and server, written in Javascript for use in NodeJS and in the browser.
+This is an implementation of a [Wisp v2](https://github.com/mercuryWorkshop/wisp-protocol) client and server for Node.js.
 
 ## Features:
 - Complete Wisp client and server implementations
 - Supports Wisp v2
 - APIs available for client and server
 - Highly configurable 
-- Supports NodeJS and the browser
+- Node.js only (Node.js 22.12 or newer)
 
 ### Library Entrypoints:
 - `@mercuryworkshop/wisp-js/client` - Only contains the client code.
 - `@mercuryworkshop/wisp-js/server` - Contains the server code, and the logging module.
 - `@mercuryworkshop/wisp-js` - Contains the server, client, and logging code.
 
-All of these entrypoints support being imported as either a CommonJS or ES6 module.
+All entrypoints run in Node.js and support both ES modules and CommonJS.
 
 ## Server CLI:
 THere is a CLI interface available for the Wisp server, and it can be used by running:
@@ -45,17 +45,15 @@ The config file is a JSON file with the same entries as the [global server confi
 ## Client API:
 
 ### Importing the Client Library:
-To use the library as an ES6 module, either in Node or using a bundler for the browser, include the following import:
+To use the library as an ES module in Node.js, include the following import:
 ```js
 import { client as wisp } from "@mercuryworkshop/wisp-js/client";
 ```
 
-To use it in Node with CommonJS:
+To use it with CommonJS:
 ```js
 const { client: wisp } = require("@mercuryworkshop/wisp-js/client");
 ```
-
-If you are not using a bundler, you may import the files in the dist folder of the package. The `wisp-client.mjs` file is an ES6 module that has the same entrypoint as the example above. The `wisp-client.js` file is a regular JS file that produce a global variable named `wisp_client`, which contains all of the exported modules. 
 
 ### Connecting to a Wisp Server:
 You can create a new Wisp connection by creating a new `ClientConnection` object. The only argument to the constructor is the URL of the Wisp websocket server. Use the `open` event to know when the Wisp connection is ready.
@@ -96,8 +94,8 @@ let payload = "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r
 stream.send(new TextEncoder().encode(payload));
 ```
 
-### Using the WebSocket Polyfill:
-The `polyfill.js` file provides an API similar to the regular [DOM WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket). Instead of creating new `WebSocket` objects, create `WispWebSocket` objects. Make sure the URL ends with the hostname and port you want to connect to. If you have code that uses the older wsproxy protocol, you can use this polyfill to provide Wisp support easily.
+### Using `WispWebSocket`:
+`WispWebSocket` is a Node.js convenience API for opening a Wisp stream with a WebSocket-like interface. Make sure the URL ends with the hostname and port you want to connect to. It can also help migrate applications that use the older wsproxy protocol.
 ```js
 import { client as wisp } from "@mercuryworkshop/wisp-js/client";
 
@@ -113,7 +111,7 @@ ws.addEventListener("message", (event) => {
 });
 ```
 
-The `wisp_client._wisp_connections` object will be used to manage the active Wisp connections. This object is able to store multiple active Wisp connections, identified by the websocket URL.
+The `wisp._wisp_connections` object manages active Wisp connections, identified by the WebSocket URL.
 
 ### Client Options:
 
@@ -131,14 +129,14 @@ let ws = new wisp.WispWebSocket(ws_url + "cloudflare.com:80");
 
 ## Server API:
 ### Importing the Server Library:
-To use the library as an ES6 module, either in Node or using a bundler for the browser, include the following import:
+To use the library as an ES module in Node.js, include the following import:
 ```js
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 ```
 
-To use it in Node with CommonJS:
+To use it with CommonJS:
 ```js
-const { server: wisp } = require("@mercuryworkshop/wisp-js/client");
+const { server: wisp } = require("@mercuryworkshop/wisp-js/server");
 ```
 
 This is designed to be a drop-in replacement for [wisp-server-node](https://github.com/MercuryWorkshop/wisp-server-node). You can replace your old import with one of the above examples, and your application will still work in the same way.

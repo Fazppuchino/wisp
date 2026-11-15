@@ -14,14 +14,10 @@
 - Relicense entire project to the GNU LGPL v3
 - Some internal cleanup
 
-## v0.4.1 (12/4/25):
-- Fixed downgrading from Wisp v2 to v1 on the client
-
 ## v0.4.0 (9/26/25):
 - Add support for Wisp v2 on the client and server
 - Allow configuring the server MOTD
 - Fix several bugs
-- Improve compatibility for older browsers
 - Add source maps in the NPM package
 
 ## v0.3.3 (10/27/24):
