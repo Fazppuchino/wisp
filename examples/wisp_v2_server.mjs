@@ -15,7 +15,6 @@ wisp.options.port_whitelist = [
 ]
 wisp.options.allow_private_ips = true;
 wisp.options.allow_loopback_ips = true;
-wisp.options.wisp_version = 2;
 wisp.options.wisp_motd = "this is a wisp-js server with wisp v2 enabled.";
 
 server.on("upgrade", (req, socket, head) => {

@@ -74,13 +74,13 @@ class ClientStream {
 }
 
 export class ClientConnection {
-  constructor(wisp_url, {wisp_version, wisp_extensions} = {}) {
+  constructor(wisp_url, {wisp_extensions} = {}) {
     if (!wisp_url.endsWith("/")) {
       throw new TypeError("wisp endpoints must end with a trailing forward slash");
     }
 
     this.wisp_url = wisp_url;
-    this.wisp_version = wisp_version || 2;
+    this.wisp_version = 2;
     this.wisp_extensions = wisp_extensions || null;
 
     this.max_buffer_size = null;
@@ -100,7 +100,7 @@ export class ClientConnection {
     this.onerror = () => {};
     this.onmessage = () => {};
 
-    if (this.wisp_version === 2 && this.wisp_extensions === null) {
+    if (this.wisp_extensions === null) {
       this.add_extensions();
     }
 
@@ -114,8 +114,7 @@ export class ClientConnection {
   }
 
   connect_ws() {
-    let subprotocol = this.wisp_version === 2 ? "wisp-v2" : undefined;
-    this.ws = new compat.WebSocket(this.wisp_url, subprotocol);
+    this.ws = new compat.WebSocket(this.wisp_url, "wisp-v2");
     this.ws.binaryType = "arraybuffer";
     this.connecting = true;
 
@@ -131,14 +130,6 @@ export class ClientConnection {
       this.onclose();
     };
     this.ws.onerror = () => {
-      if (this.wisp_version === 2 && !this.connected) {
-        // try falling back to wisp v1 if the server doesn't support v2
-        this.ws.onclose = null;
-        this.cleanup();
-        this.wisp_version = 1;
-        this.connect_ws();
-        return;
-      }
       this.cleanup();
       this.onerror();
     };
@@ -154,14 +145,17 @@ export class ClientConnection {
     let stream = this.active_streams[packet.stream_id];
     if (packet.stream_id === 0 && this.connecting) {
       if (packet.type === packet_types.CONTINUE) {
+        if (!this.info_received) {
+          this.ws.close(1002, "Wisp v2 handshake required");
+          this.cleanup();
+          this.onerror();
+          return;
+        }
         this.max_buffer_size = packet.payload.buffer_remaining;
         this.connected = true;
-        if (!this.info_received) {
-          this.wisp_version = 1;
-        }
       }
       
-      if (packet.type === packet_types.INFO && this.wisp_version === 2) {
+      if (packet.type === packet_types.INFO) {
         let server_extensions = parse_extensions(packet.payload.extensions, this.wisp_extensions, "server");
         for (let server_ext of server_extensions) {
           for (let client_ext of this.wisp_extensions) {
@@ -181,7 +175,7 @@ export class ClientConnection {
           type: InfoPayload.type,
           stream_id: 0,
           payload: new InfoPayload({
-            major_ver: this.wisp_version,
+            major_ver: 2,
             minor_ver: 0,
             extensions: ext_buffer
           })

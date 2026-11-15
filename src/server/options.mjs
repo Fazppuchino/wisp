@@ -29,7 +29,6 @@ export const options = {
   send_buffer_size: 128,
 
   //wisp v2 options
-  wisp_version: 2,
   wisp_motd: null
 }
 

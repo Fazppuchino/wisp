@@ -9,7 +9,12 @@ import { is_node, assert_on_node } from "./net.mjs";
 
 let ws_server = null;
 if (is_node) {
-  ws_server = new compat.WebSocketServer({ noServer: true });
+  ws_server = new compat.WebSocketServer({
+    noServer: true,
+    handleProtocols: (protocols) => protocols.has("wisp-v2")
+      ? "wisp-v2"
+      : protocols.values().next().value
+  });
 }
 
 export function parse_real_ip(headers, client_ip) {
@@ -26,12 +31,16 @@ export function parse_real_ip(headers, client_ip) {
 
 export function routeRequest(request, socket, head, conn_options={}) {
   assert_on_node();
-  if (request.headers["sec-websocket-protocol"] && options.wisp_version === 2)
-    conn_options.wisp_version = 2;
-  else 
-    conn_options.wisp_version = 1;
-
   if (request instanceof compat.http.IncomingMessage) {
+    if (request.url.endsWith("/") &&
+        !(request.headers["sec-websocket-protocol"] || "")
+          .split(",")
+          .map((protocol) => protocol.trim())
+          .includes("wisp-v2")) {
+      socket.write("HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n");
+      socket.destroy();
+      return;
+    }
     ws_server.handleUpgrade(request, socket, head, (ws) => {
       create_connection(ws, request.url, request, conn_options);
     });

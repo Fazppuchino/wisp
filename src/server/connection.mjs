@@ -107,13 +107,13 @@ export class ServerStream {
 }
 
 export class ServerConnection {
-  constructor(ws, path, {TCPSocket, UDPSocket, ping_interval, wisp_version, wisp_extensions} = {}) {
+  constructor(ws, path, {TCPSocket, UDPSocket, ping_interval, wisp_extensions} = {}) {
     this.ws = new AsyncWebSocket(ws);
     this.path = path;
     this.TCPSocket = TCPSocket || NodeTCPSocket;
     this.UDPSocket = UDPSocket || NodeUDPSocket;
     this.ping_interval = ping_interval || 30;
-    this.wisp_version = wisp_version || options.wisp_version;
+    this.wisp_version = 2;
     this.wisp_extensions = wisp_extensions || null;
     
     this.ping_task = null;
@@ -123,7 +123,7 @@ export class ServerConnection {
     this.server_exts = {};
     this.client_exts = {};
 
-    if (this.wisp_version === 2 && this.wisp_extensions === null) {
+    if (this.wisp_extensions === null) {
       this.add_extensions();
     }
   }
@@ -139,18 +139,16 @@ export class ServerConnection {
   }
 
   async setup() {
-    logging.info(`setting up new wisp v${this.wisp_version} connection with id ${this.conn_id}`);
+    logging.info(`setting up new wisp v2 connection with id ${this.conn_id}`);
 
     await this.ws.connect();
-    if (this.wisp_version == 2) {
-      try {
-        await this.setup_wisp_v2()
-      }
-      catch (e) {
-        logging.warn(`(${this.conn_id}) error during wisp v2 handshake: ${e}`);
-        await this.cleanup();
-        throw e;
-      }
+    try {
+      await this.setup_wisp_v2()
+    }
+    catch (e) {
+      logging.warn(`(${this.conn_id}) error during wisp v2 handshake: ${e}`);
+      await this.cleanup();
+      throw e;
     }
 
     //send initial continue packet
@@ -178,7 +176,7 @@ export class ServerConnection {
       type: InfoPayload.type,
       stream_id: 0,
       payload: new InfoPayload({
-        major_ver: this.wisp_version,
+        major_ver: 2,
         minor_ver: 0,
         extensions: ext_buffer
       })

@@ -2,7 +2,7 @@ import { client as wisp } from "@mercuryworkshop/wisp-js/client";
 
 let ws_url = `ws://localhost:5001/ws/`;
 
-let conn = new wisp.ClientConnection(ws_url, {wisp_version: 2});
+let conn = new wisp.ClientConnection(ws_url);
 
 conn.onopen = () => {
   console.log("wisp version:", conn.wisp_version);

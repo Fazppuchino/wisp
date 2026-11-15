@@ -4,7 +4,7 @@ This is an implementation of a [Wisp](https://github.com/mercuryWorkshop/wisp-pr
 
 ## Features:
 - Complete Wisp client and server implementations
-- Supports Wisp v2 and v1
+- Supports Wisp v2
 - APIs available for client and server
 - Highly configurable 
 - Supports NodeJS and the browser
@@ -120,14 +120,13 @@ The `wisp_client._wisp_connections` object will be used to manage the active Wis
 `ClientConnection` and `WispWebSocket` both accept an additional argument which specifies additional options for the Wisp connection.
 
 The following options are accepted:
-- `wisp_version` - Sets the Wisp version to use for the client (either `1` or `2`). If Wisp v2 is used, Wisp v1 connections will still be accepted. Defaults to `2`. 
 - `wisp_extensions` - Specifies custom Wisp v2 extensions to be used on the client. 
 
 For example:
 ```js
-let conn = new wisp.ClientConnection(ws_url, {wisp_version: 1});
+let conn = new wisp.ClientConnection(ws_url);
 
-let ws = new wisp.WispWebSocket(ws_url + "cloudflare.com:80", null, {wisp_version: 1});
+let ws = new wisp.WispWebSocket(ws_url + "cloudflare.com:80");
 ```
 
 ## Server API:
@@ -231,7 +230,6 @@ To change settings globally for the Wisp server, you can use the `wisp.options` 
 - `options.dns_result_order` - Controls whether or not IPv4 or IPv6 addresses are prioritized. This can be either `"ipv4first"`, `"ipv6first"`, or `"verbatim"`. `"verbatim"` uses the original order that the system DNS returns the results in, and only has special meaning if the DNS method is `"lookup"`. If the DNS method is `"resolve"`, `"verbatim"` is treated the same as `"ipv6first"`. Defaults to `"verbatim"`.
 
 **Wisp V2 Options:**
-- `options.wisp_version` - Sets the Wisp version to use for the server (either `1` or `2`). If Wisp v2 is used, Wisp v1 connections will still be accepted. Defaults to `2`. 
 - `options.wisp_motd` - Sets the MOTD for the server if Wisp v2 is used. Defaults to `null`. 
 
 **Misc Options**:
