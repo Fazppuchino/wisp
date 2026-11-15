@@ -42,6 +42,9 @@ You may also clone this repository and run `npm run server_cli -- --help`.
 
 The config file is a JSON file with the same entries as the [global server config](https://github.com/MercuryWorkshop/wisp-client-js/?tab=readme-ov-file#changing-server-settings) in the API.
 
+### Deploying on Railway:
+Railway can start the server with the included `npm start` script. It listens on `0.0.0.0` and uses Railway's `PORT` environment variable. After deployment, the generated domain's root URL returns a simple status response; Wisp clients can connect to the same domain over WebSockets.
+
 ## Client API:
 
 ### Importing the Client Library:

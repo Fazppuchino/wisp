@@ -38,6 +38,7 @@
     "build": "webpack",
     "build:prod": "webpack --mode=production",
     "dev": "webpack --watch",
+    "start": "node ./src/bin/server_cli.mjs --host 0.0.0.0",
     "server_cli": "node ./src/bin/server_cli.mjs"
   },
   "bin": {
